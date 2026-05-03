@@ -18,3 +18,13 @@ export const getById=async(id)=>{
         throw new Error('failed to fetch recipe ',err.message)
     }
 }
+
+export const remove=async(id)=>{
+    try{
+        const res=await apiClient.delete(`/recipes/${id}`)
+        return res.data
+    }
+    catch (error){
+        throw new Error('Failed to delete recipe :',error.message)
+    }
+}

@@ -1,9 +1,10 @@
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getById } from "../api/recipesApi";
-
-const RecipeDetails = () => {
-  const { id } = useParams();   
+import { getById,remove} from "../api/recipesApi";
+import RecipeDetails from "../components/RecipeDetails";
+const RecipeDetailsPage= () => {
+  const { id } = useParams();
+  const navigate=useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,19 +24,27 @@ const RecipeDetails = () => {
     fetchRecipe();
   }, [id]);
 
+   const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this recipe?")) return;
+    try {
+      await remove(id);
+      navigate("/recipes");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
   if (!recipe) return null;
 
   return (
-    <div>
-      <h2>{recipe.name}</h2>
-      <img src={recipe.image} alt={recipe.name} width="200" />
-      <p><strong>Ingredients:</strong> {recipe.ingredients?.join(", ")}</p>
-      <p><strong>Instructions:</strong> {recipe.instructions}</p>
-      <p><strong>Prep time:</strong> {recipe.prepTimeMinutes} min</p>
-    </div>
+    <>
+         <RecipeDetails recipe={recipe} loading={loading} error={error}/>
+         <button onClick={handleDelete}>Delete recipe</button>
+    </>
+    
   );
 };
 
-export default RecipeDetails;
+export default RecipeDetailsPage;
