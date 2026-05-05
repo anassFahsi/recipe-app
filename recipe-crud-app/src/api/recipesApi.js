@@ -28,3 +28,14 @@ export const remove=async(id)=>{
         throw new Error('Failed to delete recipe :',error.message)
     }
 }
+
+export const create=async(data)=>{
+    try{
+         const res=await apiClient.create('/recipes',data)
+    return res.data
+    }
+    catch(err){
+        throw new Error('Failed to create recipe :', err.message)
+    }
+    
+}
