@@ -1,72 +1,90 @@
-import  { useState } from 'react'
-import { create } from '../api/recipesApi'
-import { useNavigate } from 'react-router-dom'
-const RecipeForm = () => {
-    const navigate=useNavigate()
-    const[formData,setFormData]=useState({
-        name:'',
-        ingredients:'',
-        instructions:''
-    })
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-    const handleChange=(e)=>{
-        const{name,value}=e.target
-        setFormData(prev=>({...prev,[name]:value}))
-    }
+const RecipeForm = ({ initialData = null, onSubmit }) => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: "",
+    ingredients: "",
+    instructions: ""
+  });
 
-    const handleSubmit=async(e)=>{
-        e.preventDefault()
-        try{
-            await create('/recipes',formData)
-            alert('Recipe created succefully!')
-            navigate('/')
-        }
-        catch(err){
-            throw(err.message)
-        }
+ 
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name || "",
+        ingredients: initialData.ingredients?.join(", ") || "",
+        instructions: initialData.instructions?.join("\n") || ""
+      });
     }
-    const handleCancel=()=>navigate('/')
+  }, [initialData]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await onSubmit({
+      ...formData,
+     
+      ingredients: formData.ingredients.split(",").map((i) => i.trim()),
+     
+      instructions: formData.instructions.split("\n").map((i) => i.trim())
+    });
+  };
+
+  const handleCancel = () => navigate("/recipes");
+
   return (
-    <div>
-        <form action="#" onSubmit={handleSubmit}>
-            <label htmlFor="name">
-                <input 
-                    type="text"
-                    name='name'
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                 />
-            </label>
-            <br />
-              <label htmlFor="ingredients">
-                <input 
-                    type="text"
-                    name='ingredients'
-                    value={formData.ingredients}
-                    onChange={handleChange}
-                    required
-                 />
-            </label>
-            <br />
-              <label htmlFor="instruction">
-                <input 
-                    type="text"
-                    name='instructions'
-                    value={formData.instructions}
-                    onChange={handleChange}
-                    required
-                 />
-            </label>
-            <button type='submit'>Create recipe</button>
-            <button onClick={handleCancel}>Cancel</button>
-          
+    <form onSubmit={handleSubmit}>
+      <label>
+        Name:
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+      </label>
+      <br />
 
-            
-        </form>
-      
-    </div>
-  )
-}
+      <label>
+        Ingredients (separate with commas):
+        <input
+          type="text"
+          name="ingredients"
+          value={formData.ingredients}
+          onChange={handleChange}
+          required
+        />
+      </label>
+      <br />
 
-export default RecipeForm
+      <label>
+        Instructions (one step per line):
+        <textarea
+          name="instructions"
+          value={formData.instructions}
+          onChange={handleChange}
+          rows="6"
+          required
+        />
+      </label>
+      <br />
+
+      <button type="submit">
+        {initialData ? "Update Recipe" : "Create Recipe"}
+      </button>
+      <button type="button" onClick={handleCancel}>
+        Cancel
+      </button>
+    </form>
+  );
+};
+
+export default RecipeForm;
+

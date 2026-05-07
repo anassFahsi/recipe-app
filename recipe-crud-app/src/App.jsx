@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import RecipeDetailspage from './pages/RecipeDetailsPage'
 import RecipesPage from './pages/RecipesPage'
 import CreateRecipePage from './pages/createRecipePage'
+import UpdateRecipePage from './pages/UpdateRecipePage'
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
       <Route path='/recipes' element={<RecipesPage />} />
       <Route path='/recipes/:id' element={<RecipeDetailspage />} />
       <Route path='/create' element={<CreateRecipePage />} />
+      <Route path='/recipes/:id/edit' element={<UpdateRecipePage />}/>
     </Routes>
         
     </BrowserRouter>

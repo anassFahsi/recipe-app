@@ -39,3 +39,13 @@ export const create=async(data)=>{
     }
     
 }
+
+export const update=async(id,data)=>{
+    try{
+        const res=await apiClient.put(`/recipes/${id}`,data)
+        return res.data
+    }
+    catch(err){
+        throw new Error('failed to update recipe:',err.message)
+    }
+}
