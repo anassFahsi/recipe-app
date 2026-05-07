@@ -8,9 +8,6 @@ const RecipeDetails = ({recipe}) => (
     
     </div>
 )
-  
-
-
 
 
 export default RecipeDetails;
